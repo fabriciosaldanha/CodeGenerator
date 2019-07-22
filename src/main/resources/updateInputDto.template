@@ -1,0 +1,5 @@
+package br.mp.mppa.exemplo.controller.dto;
+
+public class BookUpdateInputDto {
+
+}

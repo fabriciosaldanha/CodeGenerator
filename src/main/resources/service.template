@@ -1,0 +1,47 @@
+package br.mp.mppa.[(${rootPackage})].service;
+
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import br.mp.mppa.[(${rootPackage})].domain.[(${entityName})];
+import br.mp.mppa.[(${rootPackage})].repository.[(${repositoryType})];
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j
+public class [(${className})] {
+
+	private [(${repositoryType})] [(${repositoryVar})];
+
+	public [(${className})]([(${repositoryType})] [(${repositoryVar})]) {
+		this.[(${repositoryVar})] = [(${repositoryVar})];
+		log.info("[(${className})] Constructor");
+	}
+
+	public [(${entityName})] create([(${entityName})] toCreate) {
+		return [(${repositoryVar})].save(toCreate);
+	}
+
+	public Page<[(${entityName})]> list(Pageable pageable) {
+		return [(${repositoryVar})].findAll(pageable);
+	}
+
+	public [(${entityName})] findOne(Long id[(${entityName})]) {
+		Optional<[(${entityName})]> [(${entityVar})] = [(${repositoryVar})].findById(id[(${entityName})]);
+		return [(${entityVar})].orElseThrow( () -> new RuntimeException("") );
+	}
+
+	public [(${entityName})] update(Long id[(${entityName})], [(${entityName})] toUpdate) {
+		[(${entityName})] [(${entityVar})] = findOne(id[(${entityName})]);
+		[(${entityVar})].update( toUpdate );
+		return [(${repositoryVar})].save( [(${entityVar})] );
+	}
+
+	public void delete(Long id[(${entityName})]) {
+		[(${entityName})] [(${entityVar})] = findOne(id[(${entityName})]);
+		[(${repositoryVar})].delete( [(${entityVar})] );
+	}
+}

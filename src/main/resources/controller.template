@@ -1,0 +1,81 @@
+package br.mp.mppa.[(${rootPackage})].controller;
+
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriTemplate;
+
+import br.mp.mppa.[(${rootPackage})].controller.dto.[(${entityName})]CreateInputDto;
+import br.mp.mppa.[(${rootPackage})].controller.dto.[(${entityName})]OutputDto;
+import br.mp.mppa.[(${rootPackage})].controller.dto.[(${entityName})]UpdateInputDto;
+import br.mp.mppa.[(${rootPackage})].domain.[(${entityName})];
+import br.mp.mppa.[(${rootPackage})].service.[(${entityName})]Service;
+
+@RestController
+@RequestMapping(value = "/api/v1/books")
+public class BookController {
+
+	private BookService bookService;
+	private ModelMapper modelMapper;
+
+	public BookController( BookService bookService, ModelMapper modelMapper ) {
+		this.bookService = bookService;
+		this.modelMapper = modelMapper;
+	}
+	
+	@GetMapping
+	public ResponseEntity< Page< BookOutputDto > > list( @PageableDefault(page = 0, size = 10, direction = Direction.ASC, sort = {"id"} ) Pageable pageable ) {
+		Page<Book> booksPage = bookService.list( pageable );
+		List<BookOutputDto> booksOutputDtoList = booksPage.getContent().stream().map( b -> modelMapper.map( b, BookOutputDto.class ) ).collect( Collectors.toList() );
+		PageImpl<BookOutputDto> booksOutputDtoPage = new PageImpl<>(booksOutputDtoList, pageable, booksPage.getTotalElements());
+		return ResponseEntity.ok( booksOutputDtoPage );
+	}
+	
+	@GetMapping(value = "/{idBook}")
+	public ResponseEntity< BookOutputDto > findOne( @PathVariable( "idBook" ) Long idBook ) {
+		Book book = bookService.findOne( idBook );
+		BookOutputDto bookOutputDto = modelMapper.map( book, BookOutputDto.class );
+		return ResponseEntity.ok( bookOutputDto );
+	}
+	
+	@PostMapping
+	public ResponseEntity<BookOutputDto> create( @RequestBody BookCreateInputDto bookCreateInputDto,
+			UriTemplate uriTemplate) {
+		Book bookToCreate = modelMapper.map( bookCreateInputDto, Book.class);
+		Book bookCreated = bookService.create( bookToCreate );
+		BookOutputDto bookOutputDto = modelMapper.map(bookCreated, BookOutputDto.class);
+		URI location = uriTemplate.expand("").resolve("");
+		return ResponseEntity.created( location ).body( bookOutputDto );
+	}
+	
+	@PutMapping(value = "/{idBook}")
+	public ResponseEntity<BookOutputDto> update( @PathVariable( "idBook" ) Long idBook,
+			@RequestBody BookUpdateInputDto bookUpdateInputDto) {
+		Book bookToUpdate = modelMapper.map( bookUpdateInputDto, Book.class);
+		Book bookUpdated = bookService.update( idBook, bookToUpdate );
+		BookOutputDto bookOutputDto = modelMapper.map( bookUpdated, BookOutputDto.class);
+		return ResponseEntity.ok( bookOutputDto );
+	}
+	
+	@DeleteMapping(value = "/{idBook}")
+	public ResponseEntity<Void> delete( @PathVariable( "idBook" ) Long idBook) {
+		bookService.delete( idBook );
+		return ResponseEntity.noContent().build();
+	}
+}

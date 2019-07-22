@@ -1,0 +1,25 @@
+package br.mp.mppa.[(${rootPackage})].domain;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity
+@Table(name = "TAB_[(${TableName})]", schema = "")
+public class [(${className})] {
+
+	@Id
+	private [(${entityIdType})] id;
+
+	public void update([(${entityName})] updateData) {
+	}
+}

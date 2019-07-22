@@ -1,0 +1,9 @@
+package br.mp.mppa.[(${rootPackage})].repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import br.mp.mppa.[(${rootPackage})].domain.[(${entityName})];
+
+@Repository
+public interface [(${className})] extends JpaRepository< [(${entityName})], [(${entityIdType})] > {}
